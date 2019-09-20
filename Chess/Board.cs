@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -59,7 +59,7 @@ namespace Chess
 
             WhiteToMove = true;
 
-            board = new string[8,8];  // Initialize array
+            board = new string[8, 8];  // Initialize array
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -95,7 +95,7 @@ namespace Chess
                 }
                 if (!found)  // If we didn't find
                     return false;
-                if (p=='R')  // If the piece is the rook
+                if (p == 'R')  // If the piece is the rook
                 {
                     if (x1 != x2 && y1 != y2) // If we try to move not on the horizontal or vertical
                         return false;
@@ -117,7 +117,6 @@ namespace Chess
                             {
                                 if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y2)  // If there's a black piece in the exact spot to where we move
                                 {
-                                    Console.WriteLine(1);
                                     Piece[] NewWhite = new Piece[17];
                                     Piece[] NewBlack = new Piece[17];
                                     for (int j = 0; WhiteArr[j] != null; j++)
@@ -133,10 +132,8 @@ namespace Chess
                                         return true;
                                     return false;
                                 }
-                                    
+
                             }
-                            WhiteArr[index].setX(x2);
-                            WhiteArr[index].setY(y2); 
                             if (!isWhiteChecked(WhiteArr, BlackArr))  // Check if move has resulted in check
                                 return true;
 
@@ -179,8 +176,6 @@ namespace Chess
                                 }
 
                             }
-                            WhiteArr[index].setX(x2);
-                            WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
 
@@ -225,8 +220,6 @@ namespace Chess
                                 }
 
                             }
-                            WhiteArr[index].setX(x2);
-                            WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
 
@@ -269,8 +262,6 @@ namespace Chess
                                 }
 
                             }
-                            WhiteArr[index].setX(x2);
-                            WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
 
@@ -283,7 +274,7 @@ namespace Chess
             }
             else
             {
-                
+
             }
             return false;
         }
@@ -313,7 +304,7 @@ namespace Chess
             delete(x2, y2, WhiteArr, BlackArr);
             if (WhiteToMove)
             {
-                for (int i = 0; WhiteArr[i] != null ; i++)
+                for (int i = 0; WhiteArr[i] != null; i++)
                 {
                     if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y1)
                     {
@@ -363,7 +354,8 @@ namespace Chess
                 if (White[i].getX() == x && White[i].getY() == y)
                 {
                     int LastP = _WhiteLastP;
-                    _WhiteLastP--;
+                    if (White == WhiteArr)
+                        _WhiteLastP--;
                     for (int j = i; j < LastP; j++)
                     {
                         White[j] = White[j + 1];
@@ -378,7 +370,8 @@ namespace Chess
                 if (Black[i].getX() == x && Black[i].getY() == y)
                 {
                     int LastP = _BlackLastP;
-                    _BlackLastP--;
+                    if (Black == BlackArr)
+                        _BlackLastP--;
                     for (int j = i; j < LastP; j++)
                     {
                         Black[j] = Black[j + 1];
