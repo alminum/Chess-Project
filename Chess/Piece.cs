@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,10 +34,12 @@ namespace Chess
         public int getX() { return x; }
         public int getY() { return y; }
         public char getP() { return p; }
+        public string getColor() { return color; }
 
         public void setX(int _x) { x = _x; }
         public void setY(int _y) { y = _y; }
         public void setP(char _p) { p = _p; }
+        public void Moved() { haveMoved = true; }
 
         public string toString()
         {
