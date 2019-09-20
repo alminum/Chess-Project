@@ -19,7 +19,7 @@ namespace Chess
 
         public Board()
         {
-            WhiteArr = new Piece[17];
+            WhiteArr = new Piece[17];  // Array for white pieces
             WhiteArr[0] = new Piece(3, 4, "w", 'R');
             WhiteArr[1] = new Piece(7, 7, "w", 'R');
             WhiteArr[2] = new Piece(7, 1, "w", 'N');
@@ -38,7 +38,7 @@ namespace Chess
             WhiteArr[15] = new Piece(6, 7, "w", 'p');
             _WhiteLastP = 16;
 
-            BlackArr = new Piece[17];
+            BlackArr = new Piece[17];  // Array for black pieces
             BlackArr[0] = new Piece(0, 0, "b", 'R');
             BlackArr[1] = new Piece(5, 4, "b", 'R');
             BlackArr[2] = new Piece(3, 2, "b", 'N');
@@ -59,33 +59,33 @@ namespace Chess
 
             WhiteToMove = true;
 
-            board = new string[8,8];
+            board = new string[8,8];  // Initialize array
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
                     if ((i + j) % 2 == 0)
-                        board[i, j] = "    ";
+                        board[i, j] = "    ";  // White squares
                     else
-                        board[i, j] = "****";
+                        board[i, j] = "****";  // Black Squares
                 }
             }
         }
 
         public int getWLP() { return _WhiteLastP; }
 
-        public bool CanMove(int x1, int y1, int x2, int y2)
+        public bool CanMove(int x1, int y1, int x2, int y2)  // Check if piece at x1,y1 can move to x2,y2
         {
-            if (x1 == x2 && y1 == y2)
+            if (x1 == x2 && y1 == y2)  // If it's the same square
                 return false;
             bool found = false;
             char p = ' ';
             int index = 0;
-            if (WhiteToMove)
+            if (WhiteToMove)  // If it's white's turn
             {
                 for (int i = 0; WhiteArr[i] != null; i++)
                 {
-                    if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y1)
+                    if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y1)  // If we found the piece that is checked (the piece at x1,y1)
                     {
                         found = true;
                         index = i;
@@ -93,29 +93,29 @@ namespace Chess
                         break;
                     }
                 }
-                if (!found)
+                if (!found)  // If we didn't find
                     return false;
-                if (p=='R')
+                if (p=='R')  // If the piece is the rook
                 {
-                    if (x1 != x2 && y1 != y2)
+                    if (x1 != x2 && y1 != y2) // If we try to move not on the horizontal or vertical
                         return false;
-                    if (x1 == x2)
+                    if (x1 == x2) // If we move on the horizontal (letters)
                     {
-                        if (y2 > y1)
+                        if (y1 < y2)  // If we move left to right
                         {
                             for (int i = 0; WhiteArr[i] != null; i++)
                             {
-                                if (WhiteArr[i].getX() == x1 && (WhiteArr[i].getY() > y1 && WhiteArr[i].getY() <= y2))
+                                if (WhiteArr[i].getX() == x1 && (WhiteArr[i].getY() > y1 && WhiteArr[i].getY() <= y2))  // If there's a white piece in the way
                                     return false;
                             }
                             for (int i = 0; BlackArr[i] != null; i++)
                             {
-                                if (BlackArr[i].getX() == x1 && (BlackArr[i].getY() > y1 && BlackArr[i].getY() < y2))
+                                if (BlackArr[i].getX() == x1 && (BlackArr[i].getY() > y1 && BlackArr[i].getY() < y2))  // If there's a black piece in the way
                                     return false;
                             }
                             for (int i = 0; BlackArr[i] != null; i++)
                             {
-                                if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y2)
+                                if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y2)  // If there's a black piece in the exact spot to where we move
                                 {
                                     Console.WriteLine(1);
                                     Piece[] NewWhite = new Piece[17];
@@ -129,20 +129,23 @@ namespace Chess
                                         NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                     }
                                     delete(x2, y2, NewWhite, NewBlack);
-                                    if (!isWhiteChecked(NewWhite, NewBlack))
+                                    if (!isWhiteChecked(NewWhite, NewBlack))  // If we can take the black piece (the king doesn't become checked)
                                         return true;
                                     return false;
                                 }
                                     
                             }
                             WhiteArr[index].setX(x2);
-                            WhiteArr[index].setY(y2);
-                            if (!isWhiteChecked(WhiteArr, BlackArr))
+                            WhiteArr[index].setY(y2); 
+                            if (!isWhiteChecked(WhiteArr, BlackArr))  // Check if move has resulted in check
                                 return true;
+
+                            WhiteArr[index].setX(x1);  // Return rook back to its place
+                            WhiteArr[index].setY(y1);
                             return false;
 
                         }
-                        else
+                        else  // If rook is moving right to left
                         {
 
                             for (int i = 0; WhiteArr[i] != null; i++)
@@ -180,13 +183,16 @@ namespace Chess
                             WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
+
+                            WhiteArr[index].setX(x1);
+                            WhiteArr[index].setY(y1);
                             return false;
                         }
 
                     }
-                    else
+                    else  // If we're moving vertically
                     {
-                        if (x2 > x1)
+                        if (x1 < x2)  // If we're moving down
                         {
                             for (int i = 0; WhiteArr[i] != null; i++)
                             {
@@ -223,10 +229,13 @@ namespace Chess
                             WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
+
+                            WhiteArr[index].setX(x1);
+                            WhiteArr[index].setY(y1);
                             return false;
 
                         }
-                        else
+                        else  // If we're moving up
                         {
                             for (int i = 0; WhiteArr[i] != null; i++)
                             {
@@ -264,6 +273,9 @@ namespace Chess
                             WhiteArr[index].setY(y2);
                             if (!isWhiteChecked(WhiteArr, BlackArr))
                                 return true;
+
+                            WhiteArr[index].setX(x1);
+                            WhiteArr[index].setY(y1);
                             return false;
                         }
                     }
