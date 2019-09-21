@@ -31,13 +31,13 @@ namespace Chess
 
 
             WhiteArr = new Piece[17];  // Array for white pieces
-            WhiteArr[0] = new Piece(3, 3, "w", 'K');
+            WhiteArr[0] = new Piece(7, 4, "w", 'K');
             WhiteArr[1] = new Piece(7, 7, "w", 'R');
             WhiteArr[2] = new Piece(7, 1, "w", 'N');
-            WhiteArr[3] = new Piece(2, 6, "w", 'N');
+            WhiteArr[3] = new Piece(7, 6, "w", 'N');
             WhiteArr[4] = new Piece(7, 2, "w", 'B');
-            WhiteArr[5] = new Piece(2, 5, "w", 'B');
-            WhiteArr[6] = new Piece(3, 4, "w", 'Q');
+            WhiteArr[5] = new Piece(7, 5, "w", 'B');
+            WhiteArr[6] = new Piece(7, 3, "w", 'Q');
             WhiteArr[7] = new Piece(7, 0, "w", 'R');
             WhiteArr[8] = new Piece(6, 0, "w", 'p');
             WhiteArr[9] = new Piece(6, 1, "w", 'p');
@@ -51,9 +51,9 @@ namespace Chess
 
             BlackArr = new Piece[17];  // Array for black pieces
             BlackArr[0] = new Piece(0, 4, "b", 'K');
-            BlackArr[1] = new Piece(5, 4, "b", 'R');
-            BlackArr[2] = new Piece(3, 2, "b", 'N');
-            BlackArr[3] = new Piece(3, 6, "b", 'N');
+            BlackArr[1] = new Piece(0, 7, "b", 'R');
+            BlackArr[2] = new Piece(0, 1, "b", 'N');
+            BlackArr[3] = new Piece(0, 6, "b", 'N');
             BlackArr[4] = new Piece(0, 2, "b", 'B');
             BlackArr[5] = new Piece(0, 5, "b", 'B');
             BlackArr[6] = new Piece(0, 3, "b", 'Q');
@@ -337,7 +337,7 @@ namespace Chess
                     {
                         for (int i = x1 - 1; i > x2; i--)
                         {
-                            if (GetPiece(i, Math.Abs(y1 - i)) != null)
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
                                 return false;
                         }
                         if (GetPiece(x2, y2) != null)
@@ -381,7 +381,7 @@ namespace Chess
                     {
                         for (int i = x1 - 1; i > x2; i--)
                         {
-                            if (GetPiece(i, i + y1) != null)
+                            if (GetPiece(i, - i + y1 + x1) != null)
                                 return false;
                         }
                         if (GetPiece(x2, y2) != null)
@@ -425,7 +425,7 @@ namespace Chess
                     {
                         for (int i = x1 + 1; i < x2; i++)
                         {
-                            if (GetPiece(i, Math.Abs(y1 - i)) != null)
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
                                 return false;
                         }
                         if (GetPiece(x2, y2) != null)
@@ -465,11 +465,11 @@ namespace Chess
                         WhiteArr[index].setY(y1);
                         return false;
                     }
-                    else
+                    else // We're moving down and right
                     {
                         for (int i = x1 + 1; i < x2; i++)
                         {
-                            if (GetPiece(i, Math.Abs(y1 + i)) != null)
+                            if (GetPiece(i, Math.Abs(y1 - i + x1)) != null)
                                 return false;
                         }
                         if (GetPiece(x2, y2) != null)
@@ -651,9 +651,9 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2 + 1, y2, NewWhite, NewBlack);
+                                delete(x2 , y2, NewWhite, NewBlack);
                                 NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
+                                NewWhite[index].setY(y2);
                                 if (!isWhiteChecked(NewWhite, NewBlack))
                                 {
                                     NewWhite[index].Moved();
@@ -712,6 +712,922 @@ namespace Chess
             }
             else
             {
+                for (int i = 0; BlackArr[i] != null; i++)
+                {
+                    if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y1)  // If we found the piece that is checked (the piece at x1,y1)
+                    {
+                        found = true;
+                        index = i;
+                        p = BlackArr[i].getP();
+                        break;
+                    }
+                }
+                if (!found)  // If we didn't find
+                    return false;
+                if (p == 'R')  // If the piece is the rook
+                {
+                    if (x1 != x2 && y1 != y2) // If we try to move not on the horizontal or vertical
+                        return false;
+                    if (x1 == x2) // If we move on the horizontal (letters)
+                    {
+                        if (y1 < y2)  // If we move left to right
+                        {
+                            for (int i = 0; BlackArr[i] != null; i++)
+                            {
+                                if (BlackArr[i].getX() == x1 && (BlackArr[i].getY() > y1 && BlackArr[i].getY() <= y2))  // If there's a Black piece in the way
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x1 && (WhiteArr[i].getY() > y1 && WhiteArr[i].getY() < y2))  // If there's a White piece in the way
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y2)  // If there's a White piece in the exact spot to where we move
+                                {
+                                    Piece[] NeBlackw = new Piece[17];
+                                    Piece[] NewWhite = new Piece[17];
+                                    for (int j = 0; BlackArr[j] != null; j++)
+                                    {
+                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    }
+                                    for (int j = 0; WhiteArr[j] != null; j++)
+                                    {
+                                        NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    }
+                                    delete(x2, y2, NeBlackw, NewWhite);
+                                    NeBlackw[i].setX(x2);
+                                    NeBlackw[i].setY(y2);
+                                    if (!isBlackChecked(NeBlackw, NewWhite))  // If we can take the White piece (the king doesn't become checked)
+                                    {
+                                        BlackArr[index].Moved();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                            }
+                            BlackArr[index].setX(x2);
+                            BlackArr[index].setY(y2);
+                            if (!isBlackChecked(BlackArr, WhiteArr)) // Check if move has resulted in check
+                            {
+                                BlackArr[index].setX(x1);
+                                BlackArr[index].setY(y1);
+                                BlackArr[index].Moved();
+                                return true;
+                            }
+
+                            BlackArr[index].setX(x1); // Return rook back to its place
+                            BlackArr[index].setY(y1);
+                            return false;
+                        }
+                        else  // If rook is moving right to left
+                        {
+
+                            for (int i = 0; BlackArr[i] != null; i++)
+                            {
+                                if (BlackArr[i].getX() == x1 && (BlackArr[i].getY() < y1 && BlackArr[i].getY() >= y2))
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x1 && (WhiteArr[i].getY() < y1 && WhiteArr[i].getY() > y2))
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y2)
+                                {
+                                    Piece[] NeBlackw = new Piece[17];
+                                    Piece[] NewWhite = new Piece[17];
+                                    for (int j = 0; BlackArr[j] != null; j++)
+                                    {
+                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    }
+                                    for (int j = 0; WhiteArr[j] != null; j++)
+                                    {
+                                        NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    }
+                                    delete(x2, y2, NeBlackw, NewWhite);
+                                    NeBlackw[i].setX(x2);
+                                    NeBlackw[i].setY(y2);
+                                    if (!isBlackChecked(NeBlackw, NewWhite))  // If we can take the White piece (the king doesn't become checked)
+                                    {
+                                        BlackArr[index].Moved();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                            }
+                            BlackArr[index].setX(x2);
+                            BlackArr[index].setY(y2);
+                            if (!isBlackChecked(BlackArr, WhiteArr))
+                            {
+                                BlackArr[index].setX(x1);
+                                BlackArr[index].setY(y1);
+                                BlackArr[index].Moved();
+                                return true;
+                            }
+
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return false;
+                        }
+
+                    }
+                    else  // If we're moving vertically
+                    {
+                        if (x1 < x2)  // If we're moving down
+                        {
+                            for (int i = 0; BlackArr[i] != null; i++)
+                            {
+                                if (BlackArr[i].getY() == y1 && (BlackArr[i].getX() > x1 && BlackArr[i].getX() <= x2))
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getY() == y1 && (WhiteArr[i].getX() > x1 && WhiteArr[i].getX() < x2))
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x2 && WhiteArr[i].getY() == y2)
+                                {
+                                    Piece[] NeBlackw = new Piece[17];
+                                    Piece[] NewWhite = new Piece[17];
+                                    for (int j = 0; BlackArr[j] != null; j++)
+                                    {
+                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    }
+                                    for (int j = 0; WhiteArr[j] != null; j++)
+                                    {
+                                        NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    }
+                                    delete(x2, y2, NeBlackw, NewWhite);
+                                    NeBlackw[i].setX(x2);
+                                    NeBlackw[i].setY(y2);
+                                    if (!isBlackChecked(NeBlackw, NewWhite))  // If we can take the White piece (the king doesn't become checked)
+                                    {
+                                        BlackArr[index].Moved();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                            }
+                            BlackArr[index].setX(x2);
+                            BlackArr[index].setY(y2);
+                            if (!isBlackChecked(BlackArr, WhiteArr))
+                            {
+                                BlackArr[index].setX(x1);
+                                BlackArr[index].setY(y1);
+                                BlackArr[index].Moved();
+                                return true;
+                            }
+
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return false;
+
+                        }
+                        else  // If we're moving up
+                        {
+                            for (int i = 0; BlackArr[i] != null; i++)
+                            {
+                                if (BlackArr[i].getY() == y1 && (BlackArr[i].getX() < x1 && BlackArr[i].getX() >= x2))
+                                    return false;
+                            }
+
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getY() == y1 && (WhiteArr[i].getX() < x1 && WhiteArr[i].getX() > x2))
+                                    return false;
+                            }
+                            for (int i = 0; WhiteArr[i] != null; i++)
+                            {
+                                if (WhiteArr[i].getX() == x2 && WhiteArr[i].getY() == y2)
+                                {
+                                    Piece[] NeBlackw = new Piece[17];
+                                    Piece[] NewWhite = new Piece[17];
+                                    for (int j = 0; BlackArr[j] != null; j++)
+                                    {
+                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    }
+                                    for (int j = 0; WhiteArr[j] != null; j++)
+                                    {
+                                        NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    }
+                                    delete(x2, y2, NeBlackw, NewWhite);
+                                    NeBlackw[i].setX(x2);
+                                    NeBlackw[i].setY(y2);
+                                    if (!isBlackChecked(NeBlackw, NewWhite))  // If we can take the White piece (the king doesn't become checked)
+                                    {
+                                        BlackArr[index].Moved();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                            }
+                            BlackArr[index].setX(x2);
+                            BlackArr[index].setY(y2);
+                            if (!isBlackChecked(BlackArr, WhiteArr))
+                            {
+                                BlackArr[index].setX(x1);
+                                BlackArr[index].setY(y1);
+                                BlackArr[index].Moved();
+                                return true;
+                            }
+
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return false;
+                        }
+                    }
+                }
+                else if (p == 'B') // If the piece is bishop
+                {
+                    if (Math.Abs(x1 - x2) != Math.Abs(y1 - y2))
+                        return false;
+                    if (x1 > x2 && y1 > y2) // If we're moving up and left
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                    return true;
+                                return false;
+                            }
+                        }
+                        BlackArr[index].setX(x2);
+                        BlackArr[index].setY(y2);
+                        if (!isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return true;
+                        }
+
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return false;
+                    }
+                    else if (x1 > x2 && y2 > y1) // We're moving up and right
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(- i + y1 + x1)) != null)
+                                return false;
+                        }
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                    return true;
+                                return false;
+                            }
+                        }
+                        BlackArr[index].setX(x2);
+                        BlackArr[index].setY(y2);
+                        if (!isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return true;
+                        }
+
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return false;
+                    }
+                    else if (x1 < x2 && y1 > y2) // We're moving down and left
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                    return true;
+                                return false;
+                            }
+                        }
+                        BlackArr[index].setX(x2);
+                        BlackArr[index].setY(y2);
+                        if (!isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return true;
+                        }
+
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return false;
+                    }
+                    else // We're moving down and right
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 - i + x1)) != null)
+                                return false;
+                        }
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                    return true;
+                                return false;
+                            }
+                        }
+                        BlackArr[index].setX(x2);
+                        BlackArr[index].setY(y2);
+                        if (!isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return true;
+                        }
+
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return false;
+                    }
+                }
+                else if (p == 'N') // If the piece is the knight
+                {
+                    if ((Math.Abs(x1 - x2) == 2 && Math.Abs(y1 - y2) == 1) || (Math.Abs(x1 - x2) == 1 && Math.Abs(y1 - y2) == 2))
+                    {
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                    return true;
+                                return false;
+                            }
+                        }
+                        BlackArr[index].setX(x2);
+                        BlackArr[index].setY(y2);
+                        if (!isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            BlackArr[index].setY(y1);
+                            return true;
+                        }
+
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return false;
+                    }
+                    return false;
+                }
+                else if (p == 'Q') // If the piece is queen
+                {
+                    BlackArr[index].setP('R');
+                    Console.Clear();
+                    Console.WriteLine(toString());
+                    if (CanMove(x1, y1, x2, y2))
+                    {
+                        Console.WriteLine(1);
+                        BlackArr[index].setP('Q');
+                        return true;
+                    }
+                    BlackArr[index].setP('B');
+                    if (CanMove(x1, y1, x2, y2))
+                    {
+                        BlackArr[index].setP('Q');
+                        return true;
+                    }
+                    BlackArr[index].setP('Q');
+                    return false;
+                }
+                else if (p == 'p')
+                {
+                    if (y1 == y2 && x1 == x2 - 1) // We're moving 1 down
+                    {
+                        if (GetPiece(x2, y2) != null)
+                            return false;
+                        BlackArr[index].setX(x2);
+                        if (isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            return false;
+                        }
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].Moved();
+                        return true;
+                    }
+                    else if (y1 == y2 && x1 == x2 - 2) // We're moving 2 down
+                    {
+                        if (BlackArr[index].getHaveMoved())
+                            return false;
+                        if (BlackArr[index].getHaveMoved())
+                            return false;
+                        if (GetPiece(x1 + 1, y1) != null || GetPiece(x1 + 2, y1) != null)
+                            return false;
+                        BlackArr[index].setX(x2);
+                        if (isBlackChecked(BlackArr, WhiteArr))
+                        {
+                            BlackArr[index].setX(x1);
+                            return false;
+                        }
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].Moved();
+                        BlackArr[index].setPawnMoved(true);
+                        return true;
+                    }
+                    else if (Math.Abs(y1 - y2) == 1 && x1 == x2 - 1)
+                    {
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "b")
+                                return false;
+                            else
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                {
+                                    NeBlackw[index].Moved();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }
+                        if (GetPiece(x2 - 1, y2) != null)
+                        {
+                            if (GetPiece(x2 - 1, y2).getPawnMoved())
+                            {
+                                Piece[] NeBlackw = new Piece[17];
+                                Piece[] NewWhite = new Piece[17];
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                }
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                }
+                                delete(x2 - 1, y2, NeBlackw, NewWhite);
+                                NeBlackw[index].setX(x2);
+                                NewWhite[index].setY(y2);
+                                if (!isBlackChecked(NeBlackw, NewWhite))
+                                {
+                                    NeBlackw[index].Moved();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }
+
+                    }
+
+                }
+                else if (p == 'K')
+                {
+                    if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
+                        return false;
+                    if (GetPiece(x2, y2) != null)
+                    {
+                        if (GetPiece(x2, y2).getColor() == "b")
+                            return false;
+                        else
+                        {
+                            Piece[] NeBlackw = new Piece[17];
+                            Piece[] NewWhite = new Piece[17];
+                            for (int j = 0; BlackArr[j] != null; j++)
+                            {
+                                NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                            }
+                            for (int j = 0; WhiteArr[j] != null; j++)
+                            {
+                                NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                            }
+                            delete(x2, y2, NeBlackw, NewWhite);
+                            NeBlackw[index].setX(x2);
+                            NewWhite[index].setY(y2);
+                            if (!isBlackChecked(NeBlackw, NewWhite))
+                                return true;
+                            return false;
+                        }
+                    }
+                    BlackArr[index].setX(x2);
+                    BlackArr[index].setY(y2);
+                    if (!isBlackChecked(BlackArr, WhiteArr))
+                    {
+                        BlackArr[index].setX(x1);
+                        BlackArr[index].setY(y1);
+                        return true;
+                    }
+
+                    BlackArr[index].setX(x1);
+                    BlackArr[index].setY(y1);
+                    return false;
+                }
+                else
+                    return false;
+
+            }
+            return false;
+        }
+
+        public bool CanHit(int x1, int y1, int x2, int y2)
+        {
+            if (x1 == x2 && y1 == y2)  // If it's the same square
+                return false;
+            bool found = false;
+            char p = ' ';
+            int index = 0;
+            if (WhiteToMove)  // If it's white's turn
+            {
+                for (int i = 0; WhiteArr[i] != null; i++)
+                {
+                    if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y1)  // If we found the piece that is checked (the piece at x1,y1)
+                    {
+                        found = true;
+                        index = i;
+                        p = WhiteArr[i].getP();
+                        break;
+                    }
+                }
+                if (!found)  // If we didn't find
+                    return false;
+                if (p == 'R')  // If the piece is the rook
+                {
+                    if (x1 != x2 && y1 != y2) // If we try to move not on the horizontal or vertical
+                        return false;
+                    if (x1 == x2) // If we move on the horizontal (letters)
+                    {
+                        if (y1 < y2)  // If we're moving down
+                        {
+                            for (int i = y1 + 1; i < y2; i++)
+                            {
+                                if (GetPiece(i, x1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else  // If we're moving up
+                        {
+                            for (int i = y1 - 1; i > y2; i--)
+                            {
+                                if (GetPiece(i, x1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                    }
+                    else  // If we're moving vertically
+                    {
+                        if (x1 < x2)  // If we're moving down
+                        {
+                            for (int i = x1 + 1; i < x2; i++)
+                            {
+                                if (GetPiece(i, y1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else  // If we're moving up
+                        {
+                            for (int i = x1 - 1; i > x2; i--)
+                            {
+                                if (GetPiece(i, y1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+                else if (p == 'B') // If the piece is bishop
+                {
+                    if (Math.Abs(x1 - x2) != Math.Abs(y1 - y2))
+                        return false;
+                    if (x1 > x2 && y1 > y2) // If we're moving up and left
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else if (x1 > x2 && y2 > y1) // We're moving up and right
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(-i + y1 + x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else if (x1 < x2 && y1 > y2) // We're moving down and left
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else // We're moving down and right
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 - i + x1)) != null)
+                                return false;
+                        }
+
+                        return true;
+                    }
+                }
+                else if (p == 'N') // If the piece is the knight
+                {
+                    if ((Math.Abs(x1 - x2) == 2 && Math.Abs(y1 - y2) == 1) || (Math.Abs(x1 - x2) == 1 && Math.Abs(y1 - y2) == 2))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                else if (p == 'Q') // If the piece is queen
+                {
+                    WhiteArr[index].setP('R');
+                    if (CanHit(x1, y1, x2, y2))
+                    {
+                        WhiteArr[index].setP('Q');
+                        return true;
+                    }
+                    WhiteArr[index].setP('B');
+                    if (CanHit(x1, y1, x2, y2))
+                    {
+                        WhiteArr[index].setP('Q');
+                        return true;
+                    }
+                    WhiteArr[index].setP('Q');
+                    return false;
+                }
+                else if (p == 'p')
+                {
+                    if (Math.Abs(y1 - y2) == 1 && x1 == x2 + 1)
+                    {
+                        return true;
+
+                    }
+                }
+                else if (p == 'K')
+                {
+                    if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
+                        return false;
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else
+            {
+                for (int i = 0; BlackArr[i] != null; i++)
+                {
+                    if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y1)  // If we found the piece that is checked (the piece at x1,y1)
+                    {
+                        found = true;
+                        index = i;
+                        p = BlackArr[i].getP();
+                        break;
+                    }
+                }
+                if (!found)  // If we didn't find
+                    return false;
+                if (p == 'R')  // If the piece is the rook
+                {
+                    if (x1 != x2 && y1 != y2) // If we try to move not on the horizontal or vertical
+                        return false;
+                    if (x1 == x2) // If we move on the horizontal (letters)
+                    {
+                        if (y1 < y2)  // If we're moving down
+                        {
+                            for (int i = y1 + 1; i < y2; i++)
+                            {
+                                if (GetPiece(i, x1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else  // If we're moving up
+                        {
+                            for (int i = y1 - 1; i > y2; i--)
+                            {
+                                if (GetPiece(i, x1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                    }
+                    else  // If we're moving vertically
+                    {
+                        if (x1 < x2)  // If we're moving down
+                        {
+                            for (int i = x1 + 1; i < x2; i++)
+                            {
+                                if (GetPiece(i, y1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else  // If we're moving up
+                        {
+                            for (int i = x1 - 1; i > x2; i--)
+                            {
+                                if (GetPiece(i, y1) != null)
+                                    return false;
+                            }
+                            return true;
+                        }
+                    }
+                }
+                else if (p == 'B') // If the piece is bishop
+                {
+                    if (Math.Abs(x1 - x2) != Math.Abs(y1 - y2))
+                        return false;
+                    if (x1 > x2 && y1 > y2) // If we're moving up and left
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else if (x1 > x2 && y2 > y1) // We're moving up and right
+                    {
+                        for (int i = x1 - 1; i > x2; i--)
+                        {
+                            if (GetPiece(i, Math.Abs(-i + y1 + x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else if (x1 < x2 && y1 > y2) // We're moving down and left
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
+                                return false;
+                        }
+                        return true;
+                    }
+                    else // We're moving down and right
+                    {
+                        for (int i = x1 + 1; i < x2; i++)
+                        {
+                            if (GetPiece(i, Math.Abs(y1 - i + x1)) != null)
+                                return false;
+                        }
+                        
+                        return true;
+                    }
+                }
+                else if (p == 'N') // If the piece is the knight
+                {
+                    if ((Math.Abs(x1 - x2) == 2 && Math.Abs(y1 - y2) == 1) || (Math.Abs(x1 - x2) == 1 && Math.Abs(y1 - y2) == 2))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
+                else if (p == 'Q') // If the piece is queen
+                {
+                    BlackArr[index].setP('R');
+                    if (CanHit(x1, y1, x2, y2))
+                    {
+                        BlackArr[index].setP('Q');
+                        return true;
+                    }
+                    BlackArr[index].setP('B');
+                    if (CanHit(x1, y1, x2, y2))
+                    {
+                        BlackArr[index].setP('Q');
+                        return true;
+                    }
+                    BlackArr[index].setP('Q');
+                    return false;
+                }
+                else if (p == 'p')
+                {
+                    if (Math.Abs(y1 - y2) == 1 && x1 == x2 - 1)
+                    {
+                        return true;
+
+                    }
+                }
+                else if (p == 'K')
+                {
+                    if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
+                        return false;
+                    return true;
+                }
+                else
+                    return false;
 
             }
             return false;
@@ -724,8 +1640,10 @@ namespace Chess
             return false;
         }
 
-        public bool isBlackCheked()
+        public bool isBlackChecked(Piece[] White, Piece[] Black)
         {
+            WhiteToMove = true;
+
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
@@ -733,26 +1651,30 @@ namespace Chess
                     checkedBlack[i, j] = false;
                 }
             }
-            Console.WriteLine(1);
-            for (int i = 0; WhiteArr[i] != null; i++)
+            for (int i = 0; White[i] != null; i++)
             {
-                checkedBlack[WhiteArr[i].getX(), WhiteArr[i].getY()] = true;
+                
                 for (int j = 0; j < 8; j++)
                 {
                     for (int k = 0; k < 8; k++)
                     {
-                        Console.WriteLine(2);
-                        if (CanMove(WhiteArr[i].getX(), WhiteArr[i].getY(), j, k))
+                        if (CanHit(White[i].getX(), White[i].getY(), j, k))
                         {
                             checkedBlack[j, k] = true;
-                            Console.WriteLine("x = " + j + " ; y = " + k);
                         }
                     }
                 }
             }
-            if (checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+            if (checkedBlack[Black[0].getX(), Black[0].getY()])
+            {
+                WhiteToMove = false;
                 return true;
+
+
+            }
+            WhiteToMove = false;
             return false;
+
         }
 
         public Piece[] getWhiteArr()
