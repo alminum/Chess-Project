@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +13,23 @@ namespace Chess
             Board b = new Board();
             while (true)
             {
+                if (b.isWhiteToMove())
+                {
+                    for (int i = 0; b.getWhiteArr()[i] != null; i++)
+                    {
+                        b.getWhiteArr()[i].setPawnMoved(false);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; b.getBlackArr()[i] != null; i++)
+                    {
+                        b.getBlackArr()[i].setPawnMoved(false);
+                    }
+                }
                 Console.Clear();
                 Console.WriteLine(b.toString());
+                
                 string s = Console.ReadLine();
                 int a1 = 0, a2 = 0, a3 = 0, a4 = 0;
                 if (s[0] == 'a')
@@ -51,21 +66,27 @@ namespace Chess
                     a4 = 7;
                 a1 = 8 - int.Parse(s[1].ToString());
                 a3 = 8 - int.Parse(s[3].ToString());
-                Console.WriteLine("" + a1 + a2 + a3 + a4);
 
                 if (b.CanMove(a1, a2, a3, a4))
                 {
                     Console.WriteLine("yes");
-                    b.delete(a3, a4, b.getWhiteArr(), b.getBlackArr());
-                    b.Move(a1, a2, a3, a4);
+                    if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a1 + 1, a4) != null && b.GetPiece(a1 + 1, a4).getPawnMoved())
+                    {
+                        b.delete(a1 + 1, a4, b.getWhiteArr(), b.getBlackArr());
+                        b.Move(a1, a2, a3, a4);
+                    }
+                    else
+                    {
+                        b.delete(a3, a4, b.getWhiteArr(), b.getBlackArr());
+                        b.Move(a1, a2, a3, a4);
+                    }
+                    
                 }
                 else
                     Console.WriteLine("no");
-                //Console.ReadLine();
-                //b.delete(7, 0);
-                //Console.Clear();
-                //Console.WriteLine(b.toString());
-                //Console.WriteLine(b.getWLP());
+                Console.ReadLine();
+                b.isBlackCheked();
+                Console.WriteLine(b.CheckedBlackToString());
                 Console.ReadLine();
 
             }
