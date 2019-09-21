@@ -12,22 +12,33 @@ namespace Chess
         bool WhiteToMove;
         public Piece[] WhiteArr;
         public Piece[] BlackArr;
-        public bool[,] checkedWhite;
-        public bool[,] checkedBlack;
+        private bool[,] checkedWhite;
+        private bool[,] checkedBlack;
         private int _WhiteLastP;
         private int _BlackLastP;
 
         public Board()
         {
+            checkedBlack = new bool[8, 8];
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    checkedBlack[i, j] = false;
+                }
+            }
+
+
+
             WhiteArr = new Piece[17];  // Array for white pieces
-            WhiteArr[0] = new Piece(7, 0, "w", 'R');
+            WhiteArr[0] = new Piece(3, 3, "w", 'K');
             WhiteArr[1] = new Piece(7, 7, "w", 'R');
             WhiteArr[2] = new Piece(7, 1, "w", 'N');
             WhiteArr[3] = new Piece(2, 6, "w", 'N');
             WhiteArr[4] = new Piece(7, 2, "w", 'B');
             WhiteArr[5] = new Piece(2, 5, "w", 'B');
             WhiteArr[6] = new Piece(3, 4, "w", 'Q');
-            WhiteArr[7] = new Piece(7, 4, "w", 'K');
+            WhiteArr[7] = new Piece(7, 0, "w", 'R');
             WhiteArr[8] = new Piece(6, 0, "w", 'p');
             WhiteArr[9] = new Piece(6, 1, "w", 'p');
             WhiteArr[10] = new Piece(6, 2, "w", 'p');
@@ -39,14 +50,14 @@ namespace Chess
             _WhiteLastP = 16;
 
             BlackArr = new Piece[17];  // Array for black pieces
-            BlackArr[0] = new Piece(0, 0, "b", 'R');
+            BlackArr[0] = new Piece(0, 4, "b", 'K');
             BlackArr[1] = new Piece(5, 4, "b", 'R');
             BlackArr[2] = new Piece(3, 2, "b", 'N');
             BlackArr[3] = new Piece(3, 6, "b", 'N');
             BlackArr[4] = new Piece(0, 2, "b", 'B');
             BlackArr[5] = new Piece(0, 5, "b", 'B');
             BlackArr[6] = new Piece(0, 3, "b", 'Q');
-            BlackArr[7] = new Piece(0, 4, "b", 'K');
+            BlackArr[7] = new Piece(0, 0, "b", 'R');
             BlackArr[8] = new Piece(1, 0, "b", 'p');
             BlackArr[9] = new Piece(1, 1, "b", 'p');
             BlackArr[10] = new Piece(1, 2, "b", 'p');
@@ -368,7 +379,7 @@ namespace Chess
                     }
                     else if (x1 > x2 && y2 > y1) // We're moving up and right
                     {
-                        for (int i = x1 - 1; i > x2; i--) 
+                        for (int i = x1 - 1; i > x2; i--)
                         {
                             if (GetPiece(i, i + y1) != null)
                                 return false;
@@ -547,14 +558,14 @@ namespace Chess
                     WhiteArr[index].setP('R');
                     Console.Clear();
                     Console.WriteLine(toString());
-                    if (CanMove(x1,x2,y1,y2))
+                    if (CanMove(x1, y1, x2, y2))
                     {
                         Console.WriteLine(1);
                         WhiteArr[index].setP('Q');
                         return true;
                     }
                     WhiteArr[index].setP('B');
-                    if (CanMove(x1, x2, y1, y2))
+                    if (CanMove(x1, y1, x2, y2))
                     {
                         WhiteArr[index].setP('Q');
                         return true;
@@ -564,8 +575,140 @@ namespace Chess
                 }
                 else if (p == 'p')
                 {
+                    if (y1 == y2 && x1 == x2 + 1)
+                    {
+                        if (GetPiece(x2, y2) != null)
+                            return false;
+                        WhiteArr[index].setX(x2);
+                        if (isWhiteChecked(WhiteArr, BlackArr))
+                        {
+                            WhiteArr[index].setX(x1);
+                            return false;
+                        }
+                        WhiteArr[index].setX(x1);
+                        WhiteArr[index].Moved();
+                        return true;
+                    }
+                    else if (y1 == y2 && x1 == x2 + 2)
+                    {
+                        if (WhiteArr[index].getHaveMoved())
+                            return false;
+                        if (WhiteArr[index].getHaveMoved())
+                            return false;
+                        if (GetPiece(x1 - 1, y1) != null || GetPiece(x1 - 2, y1) != null)
+                            return false;
+                        WhiteArr[index].setX(x2);
+                        if (isWhiteChecked(WhiteArr, BlackArr))
+                        {
+                            WhiteArr[index].setX(x1);
+                            return false;
+                        }
+                        WhiteArr[index].setX(x1);
+                        WhiteArr[index].Moved();
+                        WhiteArr[index].setPawnMoved(true);
+                        return true;
+                    }
+                    else if (Math.Abs(y1 - y2) == 1 && x1 == x2 + 1)
+                    {
+                        if (GetPiece(x2, y2) != null)
+                        {
+                            if (GetPiece(x2, y2).getColor() == "w")
+                                return false;
+                            else
+                            {
+                                Piece[] NewWhite = new Piece[17];
+                                Piece[] NewBlack = new Piece[17];
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
+                                }
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
+                                }
+                                delete(x2, y2, NewWhite, NewBlack);
+                                NewWhite[index].setX(x2);
+                                NewBlack[index].setY(y2);
+                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                {
+                                    NewWhite[index].Moved();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }
+                        if (GetPiece(x2 + 1, y2) != null)
+                        {
+                            if (GetPiece(x2 + 1, y2).getPawnMoved())
+                            {
+                                Piece[] NewWhite = new Piece[17];
+                                Piece[] NewBlack = new Piece[17];
+                                for (int j = 0; WhiteArr[j] != null; j++)
+                                {
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
+                                }
+                                for (int j = 0; BlackArr[j] != null; j++)
+                                {
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
+                                }
+                                delete(x2 + 1, y2, NewWhite, NewBlack);
+                                NewWhite[index].setX(x2);
+                                NewBlack[index].setY(y2);
+                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                {
+                                    NewWhite[index].Moved();
+                                    return true;
+                                }
+                                return false;
+                            }
+                        }
+
+                    }
 
                 }
+                else if (p == 'K')
+                {
+                    if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
+                        return false;
+                    if (GetPiece(x2, y2) != null)
+                    {
+                        if (GetPiece(x2, y2).getColor() == "w")
+                            return false;
+                        else
+                        {
+                            Piece[] NewWhite = new Piece[17];
+                            Piece[] NewBlack = new Piece[17];
+                            for (int j = 0; WhiteArr[j] != null; j++)
+                            {
+                                NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
+                            }
+                            for (int j = 0; BlackArr[j] != null; j++)
+                            {
+                                NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
+                            }
+                            delete(x2, y2, NewWhite, NewBlack);
+                            NewWhite[index].setX(x2);
+                            NewBlack[index].setY(y2);
+                            if (!isWhiteChecked(NewWhite, NewBlack))
+                                return true;
+                            return false;
+                        }
+                    }
+                    WhiteArr[index].setX(x2);
+                    WhiteArr[index].setY(y2);
+                    if (!isWhiteChecked(WhiteArr, BlackArr))
+                    {
+                        WhiteArr[index].setX(x1);
+                        WhiteArr[index].setY(y1);
+                        return true;
+                    }
+
+                    WhiteArr[index].setX(x1);
+                    WhiteArr[index].setY(y1);
+                    return false;
+                }
+                else
+                    return false;
             }
             else
             {
@@ -574,6 +717,8 @@ namespace Chess
             return false;
         }
 
+        public bool isWhiteToMove() { return WhiteToMove; }
+
         public bool isWhiteChecked(Piece[] White, Piece[] Black)
         {
             return false;
@@ -581,12 +726,57 @@ namespace Chess
 
         public bool isBlackCheked()
         {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    checkedBlack[i, j] = false;
+                }
+            }
+            Console.WriteLine(1);
+            for (int i = 0; WhiteArr[i] != null; i++)
+            {
+                checkedBlack[WhiteArr[i].getX(), WhiteArr[i].getY()] = true;
+                for (int j = 0; j < 8; j++)
+                {
+                    for (int k = 0; k < 8; k++)
+                    {
+                        Console.WriteLine(2);
+                        if (CanMove(WhiteArr[i].getX(), WhiteArr[i].getY(), j, k))
+                        {
+                            checkedBlack[j, k] = true;
+                            Console.WriteLine("x = " + j + " ; y = " + k);
+                        }
+                    }
+                }
+            }
+            if (checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                return true;
             return false;
         }
 
         public Piece[] getWhiteArr()
         {
             return WhiteArr;
+        }
+
+        public string CheckedBlackToString()
+        {
+            string s = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (checkedBlack[i, j])
+                        s += "1";
+                    else
+                        s += "0";
+                }
+                s += '\n';
+            }
+
+            return s;
         }
 
         public Piece[] getBlackArr()
