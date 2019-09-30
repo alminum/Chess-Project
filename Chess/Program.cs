@@ -70,11 +70,19 @@ namespace Chess
                 if (b.CanMove(a1, a2, a3, a4))
                 {
                     Console.WriteLine("yes");
-                    if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a1 + 1, a4) != null && b.GetPiece(a1 + 1, a4).getPawnMoved())
+                    // en passant white
+                    if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 + 1, a4) != null && b.GetPiece(a3 + 1, a4).getPawnMoved())
                     {
-                        b.delete(a1 + 1, a4, b.getWhiteArr(), b.getBlackArr());
+                        b.delete(a3 + 1, a4, b.getWhiteArr(), b.getBlackArr());
                         b.Move(a1, a2, a3, a4);
                     }
+                    // en passant black
+                    else if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 - 1, a4) != null && b.GetPiece(a3 - 1, a4).getPawnMoved())
+                    {
+                        b.delete(a3 - 1, a4, b.getWhiteArr(), b.getBlackArr());
+                        b.Move(a1, a2, a3, a4);
+                    }
+
                     else
                     {
                         b.delete(a3, a4, b.getWhiteArr(), b.getBlackArr());
@@ -85,7 +93,7 @@ namespace Chess
                 else
                     Console.WriteLine("no");
                 Console.ReadLine();
-                b.isBlackCheked();
+                b.isBlackChecked(b.WhiteArr, b.BlackArr);
                 Console.WriteLine(b.CheckedBlackToString());
                 Console.ReadLine();
 
