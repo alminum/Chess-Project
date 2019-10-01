@@ -591,8 +591,6 @@ namespace Chess
                     {
                         if (WhiteArr[index].getHaveMoved())
                             return false;
-                        if (WhiteArr[index].getHaveMoved())
-                            return false;
                         if (GetPiece(x1 - 1, y1) != null || GetPiece(x1 - 2, y1) != null)
                             return false;
                         WhiteArr[index].setX(x2);
@@ -663,6 +661,12 @@ namespace Chess
                 }
                 else if (p == 'K')
                 {
+                    if (x1 == 7 && y1 == 4 && x2 == 7 && y2 == 6)
+                        return CanCastle('w', 's');
+
+                    if (x1 == 7 && y1 == 4 && x2 == 7 && y2 == 2)
+                        return CanCastle('w', 'l');
+
                     if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
                         return false;
                     if (GetPiece(x2, y2) != null)
@@ -1271,6 +1275,11 @@ namespace Chess
                 }
                 else if (p == 'K')
                 {
+                    if (x1 == 0 && y1 == 4 && x2 == 0 && y2 == 6)
+                        return CanCastle('b', 's');
+                    if (x1 == 0 && y1 == 4 && x2 == 0 && y2 == 2)
+                        return CanCastle('b', 'l');
+
                     if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
                         return false;
                     if (GetPiece(x2, y2) != null)
@@ -1718,9 +1727,154 @@ namespace Chess
             return s;
         }
 
-        public bool CanCastle()
+        public bool CanCastle(char colour, char len)
         {
-            return false;
+            if (colour == 'w') // White is castling
+            {
+                int king_idx = 0;
+
+                for (int i = 0; i < WhiteArr.Length; i++) // Find king
+                {
+                    if (WhiteArr[i].getP() == 'K')
+                    {
+                        king_idx = i;
+                        break;
+                    }
+                }
+
+                if (WhiteArr[king_idx].getHaveMoved())  // If king has moved
+                    return false;
+
+                if (len == 's') // If short castling
+                {
+                    try
+                    {
+                        if (GetPiece(7, 7).getHaveMoved()) // If rook has moved
+                            return false;
+                    }
+                    catch (NullReferenceException e)
+                    {
+                        return false;
+                    }
+
+                    if (GetPiece(7, 5) != null || GetPiece(7,6) != null) // Check that there is nothing in between
+                        return false;
+
+                    for (int i = 4; i <= 6; i++)  // Check that king doesn't pass through checked squares
+                    {
+                        WhiteArr[king_idx].setY(i);
+                        if (isWhiteChecked(WhiteArr, BlackArr))
+                        {
+                            WhiteArr[king_idx].setY(4);
+                            return false;
+                        }
+                    }
+
+                    WhiteArr[king_idx].setY(4);
+                    return true;
+                }
+                else
+                {
+                    try
+                    {
+                        if (GetPiece(7, 0).getHaveMoved())
+                            return false;
+                    }
+                    catch (NullReferenceException e)
+                    {
+                        return false;
+                    }
+
+                    if (GetPiece(7, 3) != null || GetPiece(7, 2) != null || GetPiece(7, 1) != null)
+                        return false;
+
+                    for (int i = 4; i >= 2; i--)
+                    {
+                        WhiteArr[king_idx].setY(i);
+                        if (isWhiteChecked(WhiteArr, BlackArr))
+                        {
+                            WhiteArr[king_idx].setY(4);
+                            return false;
+                        }
+                    }
+
+                    WhiteArr[king_idx].setY(4);
+                    return true;
+                }
+            }
+            else
+            {
+                int king_idx = 0;
+
+                for (int i = 0; i < BlackArr.Length; i++)
+                {
+                    if (BlackArr[i].getP() == 'K')
+                    {
+                        king_idx = i;
+                        break;
+                    }
+                }
+
+                if (BlackArr[king_idx].getHaveMoved())
+                    return false;
+
+                if (len == 's')
+                {
+                    try
+                    {
+                        if (GetPiece(0, 7).getHaveMoved())
+                            return false;
+                    }
+                    catch (NullReferenceException e)
+                    {
+                        return false;
+                    }
+
+                    if (GetPiece(0, 5) != null || GetPiece(0, 6) != null)
+                        return false;
+
+                    for (int i = 4; i <= 6; i++)
+                    {
+                        BlackArr[king_idx].setY(i);
+                        if (isBlackChecked(WhiteArr, BlackArr))
+                        {
+                            BlackArr[king_idx].setY(4);
+                            return false;
+                        }
+                    }
+
+                    BlackArr[king_idx].setY(4);
+                    return true;
+                }
+                else
+                {
+                    try
+                    {
+                        if (GetPiece(0, 0).getHaveMoved())
+                            return false;
+                    }
+                    catch (NullReferenceException e)
+                    {
+                        return false;
+                    }
+
+                    if (GetPiece(0, 3) != null || GetPiece(0, 2) != null || GetPiece(0, 1) != null)
+                        return false;
+
+                    for (int i = 4; i >= 2; i--)
+                    {
+                        BlackArr[king_idx].setY(i);
+                        if (isBlackChecked(WhiteArr, BlackArr))
+                        {
+                            BlackArr[king_idx].setY(4);
+                            return false;
+                        }
+                    }
+
+                    BlackArr[king_idx].setY(4);
+                    return true;
+                }
+            }
         }
 
         public string CheckedWhiteToString()

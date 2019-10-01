@@ -71,13 +71,13 @@ namespace Chess
                 {
                     Console.WriteLine("yes");
                     // en passant white
-                    if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 + 1, a4) != null && b.GetPiece(a3 + 1, a4).getPawnMoved())
+                    if (b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 + 1, a4) != null && b.GetPiece(a3 + 1, a4).getPawnMoved())
                     {
                         b.delete(a3 + 1, a4, b.getWhiteArr(), b.getBlackArr());
                         b.Move(a1, a2, a3, a4);
                     }
                     // en passant black
-                    else if (b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 - 1, a4) != null && b.GetPiece(a3 - 1, a4).getPawnMoved())
+                    else if (!b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'p' && b.GetPiece(a3 - 1, a4) != null && b.GetPiece(a3 - 1, a4).getPawnMoved())
                     {
                         b.delete(a3 - 1, a4, b.getWhiteArr(), b.getBlackArr());
                         b.Move(a1, a2, a3, a4);
