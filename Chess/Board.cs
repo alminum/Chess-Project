@@ -99,6 +99,16 @@ namespace Chess
             bool found = false;
             char p = ' ';
             int index = 0;
+            Piece[] NewBlack = new Piece[17];
+            Piece[] NewWhite = new Piece[17];
+            for (int j = 0; WhiteArr[j] != null; j++)
+            {
+                NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
+            }
+            for (int j = 0; BlackArr[j] != null; j++)
+            {
+                NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
+            }
             if (WhiteToMove)  // If it's white's turn
             {
                 for (int i = 0; WhiteArr[i] != null; i++)
@@ -135,8 +145,6 @@ namespace Chess
                             {
                                 if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y2)  // If there's a black piece in the exact spot to where we move
                                 {
-                                    Piece[] NewWhite = new Piece[17];
-                                    Piece[] NewBlack = new Piece[17];
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -145,28 +153,38 @@ namespace Chess
                                     {
                                         NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                     }
-                                    delete(x2, y2, NewWhite, NewBlack);
-                                    NewWhite[i].setX(x2);
-                                    NewWhite[i].setY(y2);
-                                    if (!isWhiteChecked(NewWhite, NewBlack))  // If we can take the black piece (the king doesn't become checked)
+                                    delete(x2, y2, WhiteArr, BlackArr);
+                                    WhiteArr[index].setX(x2);
+                                    WhiteArr[index].setY(y2);
+                                    delete(x1, y1, WhiteArr, BlackArr);
+                                    UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                    if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                     {
+                                        WhiteArr = NewWhite;
+                                        BlackArr = NewBlack;
                                         return true;
                                     }
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return false;
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             WhiteArr[index].setX(x2);
                             WhiteArr[index].setY(y2);
-                            if (!isWhiteChecked(WhiteArr, BlackArr)) // Check if move has resulted in check
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdWhiteChecked(WhiteArr, BlackArr);
+
+                            if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                             {
-                                WhiteArr[index].setX(x1);
-                                WhiteArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            WhiteArr[index].setX(x1); // Return rook back to its place
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                         else  // If rook is moving right to left
@@ -186,8 +204,6 @@ namespace Chess
                             {
                                 if (BlackArr[i].getX() == x1 && BlackArr[i].getY() == y2)
                                 {
-                                    Piece[] NewWhite = new Piece[17];
-                                    Piece[] NewBlack = new Piece[17];
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -196,28 +212,38 @@ namespace Chess
                                     {
                                         NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                     }
-                                    delete(x2, y2, NewWhite, NewBlack);
-                                    NewWhite[i].setX(x2);
-                                    NewWhite[i].setY(y2);
-                                    if (!isWhiteChecked(NewWhite, NewBlack))  // If we can take the black piece (the king doesn't become checked)
+                                    delete(x2, y2, WhiteArr, BlackArr);
+                                    WhiteArr[index].setX(x2);
+                                    WhiteArr[index].setY(y2);
+                                    delete(x1, y1, WhiteArr, BlackArr);
+                                    UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                    if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                     {
+                                        WhiteArr = NewWhite;
+                                        BlackArr = NewBlack;
                                         return true;
                                     }
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return false;
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             WhiteArr[index].setX(x2);
                             WhiteArr[index].setY(y2);
-                            if (!isWhiteChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdWhiteChecked(WhiteArr, BlackArr);
+
+                            if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                             {
-                                WhiteArr[index].setX(x1);
-                                WhiteArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
 
@@ -240,8 +266,6 @@ namespace Chess
                             {
                                 if (BlackArr[i].getX() == x2 && BlackArr[i].getY() == y2)
                                 {
-                                    Piece[] NewWhite = new Piece[17];
-                                    Piece[] NewBlack = new Piece[17];
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -250,30 +274,39 @@ namespace Chess
                                     {
                                         NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                     }
-                                    delete(x2, y2, NewWhite, NewBlack);
-                                    NewWhite[i].setX(x2);
-                                    NewWhite[i].setY(y2);
-                                    if (!isWhiteChecked(NewWhite, NewBlack))  // If we can take the black piece (the king doesn't become checked)
+                                    delete(x2, y2, WhiteArr, BlackArr);
+                                    WhiteArr[index].setX(x2);
+                                    WhiteArr[index].setY(y2);
+                                    delete(x1, y1, WhiteArr, BlackArr);
+                                    UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                    if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                     {
+                                        WhiteArr = NewWhite;
+                                        BlackArr = NewBlack;
                                         return true;
                                     }
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return false;
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             WhiteArr[index].setX(x2);
                             WhiteArr[index].setY(y2);
-                            if (!isWhiteChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdWhiteChecked(WhiteArr, BlackArr);
+
+                            if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                             {
-                                WhiteArr[index].setX(x1);
-                                WhiteArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
-
                         }
                         else  // If we're moving up
                         {
@@ -292,8 +325,6 @@ namespace Chess
                             {
                                 if (BlackArr[i].getX() == x2 && BlackArr[i].getY() == y2)
                                 {
-                                    Piece[] NewWhite = new Piece[17];
-                                    Piece[] NewBlack = new Piece[17];
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -302,28 +333,38 @@ namespace Chess
                                     {
                                         NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                     }
-                                    delete(x2, y2, NewWhite, NewBlack);
-                                    NewWhite[i].setX(x2);
-                                    NewWhite[i].setY(y2);
-                                    if (!isWhiteChecked(NewWhite, NewBlack))  // If we can take the black piece (the king doesn't become checked)
+                                    delete(x2, y2, WhiteArr, BlackArr);
+                                    WhiteArr[index].setX(x2);
+                                    WhiteArr[index].setY(y2);
+                                    delete(x1, y1, WhiteArr, BlackArr);
+                                    UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                    if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                     {
+                                        WhiteArr = NewWhite;
+                                        BlackArr = NewBlack;
                                         return true;
                                     }
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return false;
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             WhiteArr[index].setX(x2);
                             WhiteArr[index].setY(y2);
-                            if (!isWhiteChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdWhiteChecked(WhiteArr, BlackArr);
+
+                            if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                             {
-                                WhiteArr[index].setX(x1);
-                                WhiteArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                     }
@@ -345,8 +386,7 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
+                                
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -355,25 +395,37 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         WhiteArr[index].setX(x2);
                         WhiteArr[index].setY(y2);
-                        if (!isWhiteChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdWhiteChecked(WhiteArr, BlackArr);
+
+                        if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                         {
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else if (x1 > x2 && y2 > y1) // We're moving up and right
@@ -389,8 +441,7 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
+                                
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -399,25 +450,37 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         WhiteArr[index].setX(x2);
                         WhiteArr[index].setY(y2);
-                        if (!isWhiteChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdWhiteChecked(WhiteArr, BlackArr);
+
+                        if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                         {
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else if (x1 < x2 && y1 > y2) // We're moving down and left
@@ -433,8 +496,7 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
+                                
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -443,25 +505,38 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         WhiteArr[index].setX(x2);
                         WhiteArr[index].setY(y2);
-                        if (!isWhiteChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdWhiteChecked(WhiteArr, BlackArr);
+
+                        if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                         {
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else // We're moving down and right
@@ -477,8 +552,7 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
+                                
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -487,25 +561,37 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         WhiteArr[index].setX(x2);
                         WhiteArr[index].setY(y2);
-                        if (!isWhiteChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdWhiteChecked(WhiteArr, BlackArr);
+
+                        if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                         {
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                 }
@@ -519,8 +605,6 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -529,25 +613,37 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         WhiteArr[index].setX(x2);
                         WhiteArr[index].setY(y2);
-                        if (!isWhiteChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdWhiteChecked(WhiteArr, BlackArr);
+
+                        if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                         {
-                            WhiteArr[index].setX(x1);
-                            WhiteArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     return false;
@@ -559,7 +655,6 @@ namespace Chess
                     Console.WriteLine(toString());
                     if (CanMove(x1, y1, x2, y2))
                     {
-                        Console.WriteLine(1);
                         WhiteArr[index].setP('Q');
                         return true;
                     }
@@ -591,6 +686,8 @@ namespace Chess
                     {
                         if (WhiteArr[index].getHaveMoved())
                             return false;
+                        if (WhiteArr[index].getHaveMoved())
+                            return false;
                         if (GetPiece(x1 - 1, y1) != null || GetPiece(x1 - 2, y1) != null)
                             return false;
                         WhiteArr[index].setX(x2);
@@ -611,8 +708,6 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -621,13 +716,20 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewBlack[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                 {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
                                 }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
@@ -635,8 +737,7 @@ namespace Chess
                         {
                             if (GetPiece(x2 + 1, y2).getPawnMoved())
                             {
-                                Piece[] NewWhite = new Piece[17];
-                                Piece[] NewBlack = new Piece[17];
+                                
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
                                     NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -645,13 +746,20 @@ namespace Chess
                                 {
                                     NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
-                                delete(x2 , y2, NewWhite, NewBlack);
-                                NewWhite[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isWhiteChecked(NewWhite, NewBlack))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                WhiteArr[index].setX(x2);
+                                WhiteArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdWhiteChecked(WhiteArr, BlackArr);
+
+                                if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                                 {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
                                 }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
@@ -661,12 +769,6 @@ namespace Chess
                 }
                 else if (p == 'K')
                 {
-                    if (x1 == 7 && y1 == 4 && x2 == 7 && y2 == 6)
-                        return CanCastle('w', 's');
-
-                    if (x1 == 7 && y1 == 4 && x2 == 7 && y2 == 2)
-                        return CanCastle('w', 'l');
-
                     if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
                         return false;
                     if (GetPiece(x2, y2) != null)
@@ -675,8 +777,7 @@ namespace Chess
                             return false;
                         else
                         {
-                            Piece[] NewWhite = new Piece[17];
-                            Piece[] NewBlack = new Piece[17];
+                            
                             for (int j = 0; WhiteArr[j] != null; j++)
                             {
                                 NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
@@ -685,25 +786,37 @@ namespace Chess
                             {
                                 NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                             }
-                            delete(x2, y2, NewWhite, NewBlack);
-                            NewWhite[index].setX(x2);
-                            NewBlack[index].setY(y2);
-                            if (!isWhiteChecked(NewWhite, NewBlack))
+                            delete(x2, y2, WhiteArr, BlackArr);
+                            WhiteArr[index].setX(x2);
+                            WhiteArr[index].setY(y2);
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdWhiteChecked(WhiteArr, BlackArr);
+
+                            if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
+                            {
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
+                            }
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                     }
+                    delete(x2, y2, WhiteArr, BlackArr);
                     WhiteArr[index].setX(x2);
                     WhiteArr[index].setY(y2);
-                    if (!isWhiteChecked(WhiteArr, BlackArr))
+                    delete(x1, y1, WhiteArr, BlackArr);
+                    UpdWhiteChecked(WhiteArr, BlackArr);
+
+                    if (!checkedWhite[WhiteArr[0].getX(), WhiteArr[0].getY()])
                     {
-                        WhiteArr[index].setX(x1);
-                        WhiteArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return true;
                     }
-
-                    WhiteArr[index].setX(x1);
-                    WhiteArr[index].setY(y1);
+                    WhiteArr = NewWhite;
+                    BlackArr = NewBlack;
                     return false;
                 }
                 else
@@ -745,20 +858,21 @@ namespace Chess
                             {
                                 if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y2)  // If there's a White piece in the exact spot to where we move
                                 {
-                                    Piece[] NeBlackw = new Piece[17];
-                                    Piece[] NewWhite = new Piece[17];
+                                    
                                     for (int j = 0; BlackArr[j] != null; j++)
                                     {
-                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                        NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
                                     }
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
                                     }
-                                    delete(x2, y2, NeBlackw, NewWhite);
-                                    NeBlackw[i].setX(x2);
-                                    NeBlackw[i].setY(y2);
-                                    if (!isBlackChecked(NewWhite, NeBlackw))  // If we can take the White piece (the king doesn't become checked)
+                                    delete(x2, y2, NewBlack, NewWhite);
+                                    NewBlack[i].setX(x2);
+                                    NewBlack[i].setY(y2);
+                                    isBlackChecked(NewWhite, NewBlack);
+
+                                    if (!checkedBlack[NewBlack[index].getX(), NewBlack[index].getY()])  // If we can take the White piece (the king doesn't become checked)
                                     {
                                         return true;
                                     }
@@ -766,17 +880,20 @@ namespace Chess
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             BlackArr[index].setX(x2);
                             BlackArr[index].setY(y2);
-                            if (!isBlackChecked(WhiteArr, BlackArr)) // Check if move has resulted in check
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdBlackChecked(WhiteArr, BlackArr);
+
+                            if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                             {
-                                BlackArr[index].setX(x1);
-                                BlackArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            BlackArr[index].setX(x1); // Return rook back to its place
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                         else  // If rook is moving right to left
@@ -796,20 +913,21 @@ namespace Chess
                             {
                                 if (WhiteArr[i].getX() == x1 && WhiteArr[i].getY() == y2)
                                 {
-                                    Piece[] NeBlackw = new Piece[17];
-                                    Piece[] NewWhite = new Piece[17];
+                                    
                                     for (int j = 0; BlackArr[j] != null; j++)
                                     {
-                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                        NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
                                     }
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
                                     }
-                                    delete(x2, y2, NewWhite, NeBlackw);
-                                    NeBlackw[i].setX(x2);
-                                    NeBlackw[i].setY(y2);
-                                    if (!isBlackChecked(NewWhite, NeBlackw))  // If we can take the White piece (the king doesn't become checked)
+                                    delete(x2, y2, NewWhite, NewBlack);
+                                    NewBlack[i].setX(x2);
+                                    NewBlack[i].setY(y2);
+                                    isBlackChecked(NewWhite, NewBlack);
+
+                                    if (!checkedBlack[NewBlack[index].getX(), NewBlack[index].getY()])  // If we can take the White piece (the king doesn't become checked)
                                     {
                                         return true;
                                     }
@@ -817,17 +935,20 @@ namespace Chess
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             BlackArr[index].setX(x2);
                             BlackArr[index].setY(y2);
-                            if (!isBlackChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdBlackChecked(WhiteArr, BlackArr);
+
+                            if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                             {
-                                BlackArr[index].setX(x1);
-                                BlackArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
 
@@ -850,20 +971,21 @@ namespace Chess
                             {
                                 if (WhiteArr[i].getX() == x2 && WhiteArr[i].getY() == y2)
                                 {
-                                    Piece[] NeBlackw = new Piece[17];
-                                    Piece[] NewWhite = new Piece[17];
+                                    
                                     for (int j = 0; BlackArr[j] != null; j++)
                                     {
-                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                        NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
                                     }
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
                                     }
-                                    delete(x2, y2, NeBlackw, NewWhite);
-                                    NeBlackw[i].setX(x2);
-                                    NeBlackw[i].setY(y2);
-                                    if (!isBlackChecked(NewWhite, NeBlackw))  // If we can take the White piece (the king doesn't become checked)
+                                    delete(x2, y2, NewBlack, NewWhite);
+                                    NewBlack[i].setX(x2);
+                                    NewBlack[i].setY(y2);
+                                    isBlackChecked(NewWhite, NewBlack);
+
+                                    if (!checkedBlack[NewBlack[index].getX(), NewBlack[index].getY()])  // If we can take the White piece (the king doesn't become checked)
                                     {
                                         return true;
                                     }
@@ -871,17 +993,20 @@ namespace Chess
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             BlackArr[index].setX(x2);
                             BlackArr[index].setY(y2);
-                            if (!isBlackChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdBlackChecked(WhiteArr, BlackArr);
+
+                            if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                             {
-                                BlackArr[index].setX(x1);
-                                BlackArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
 
                         }
@@ -902,20 +1027,21 @@ namespace Chess
                             {
                                 if (WhiteArr[i].getX() == x2 && WhiteArr[i].getY() == y2)
                                 {
-                                    Piece[] NeBlackw = new Piece[17];
-                                    Piece[] NewWhite = new Piece[17];
+                                    
                                     for (int j = 0; BlackArr[j] != null; j++)
                                     {
-                                        NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                        NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
                                     }
                                     for (int j = 0; WhiteArr[j] != null; j++)
                                     {
                                         NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
                                     }
-                                    delete(x2, y2, NeBlackw, NewWhite);
-                                    NeBlackw[i].setX(x2);
-                                    NeBlackw[i].setY(y2);
-                                    if (!isBlackChecked(NewWhite, NeBlackw))  // If we can take the White piece (the king doesn't become checked)
+                                    delete(x2, y2, NewBlack, NewWhite);
+                                    NewBlack[i].setX(x2);
+                                    NewBlack[i].setY(y2);
+                                    if (!checkedBlack[NewBlack[index].getX(), NewBlack[index].getY()])
+
+                                        if (!isBlackChecked(NewWhite, NewBlack))  // If we can take the White piece (the king doesn't become checked)
                                     {
                                         return true;
                                     }
@@ -923,17 +1049,20 @@ namespace Chess
                                 }
 
                             }
+                            delete(x2, y2, WhiteArr, BlackArr);
                             BlackArr[index].setX(x2);
                             BlackArr[index].setY(y2);
-                            if (!isBlackChecked(WhiteArr, BlackArr))
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdBlackChecked(WhiteArr, BlackArr);
+
+                            if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                             {
-                                BlackArr[index].setX(x1);
-                                BlackArr[index].setY(y1);
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
                             }
-
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                     }
@@ -951,39 +1080,59 @@ namespace Chess
                         }
                         if (GetPiece(x2, y2) != null)
                         {
-                            if (GetPiece(x2, y2).getColor() == "w")
+                            if (GetPiece(x2, y2).getColor() == "b")
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NewWhite, NeBlackw);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        
+                        for (int j = 0; BlackArr[j] != null; j++)
+                        {
+                            NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
+                        }
+                        for (int j = 0; WhiteArr[j] != null; j++)
+                        {
+                            NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
+                        }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         BlackArr[index].setX(x2);
                         BlackArr[index].setY(y2);
-                        if (!isBlackChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdBlackChecked(WhiteArr, BlackArr);
+
+                        if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                         {
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else if (x1 > x2 && y2 > y1) // We're moving up and right
@@ -995,39 +1144,50 @@ namespace Chess
                         }
                         if (GetPiece(x2, y2) != null)
                         {
-                            if (GetPiece(x2, y2).getColor() == "w")
+                            if (GetPiece(x2, y2).getColor() == "b")
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         BlackArr[index].setX(x2);
                         BlackArr[index].setY(y2);
-                        if (!isBlackChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdBlackChecked(WhiteArr, BlackArr);
+
+                        if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                         {
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else if (x1 < x2 && y1 > y2) // We're moving down and left
@@ -1039,45 +1199,54 @@ namespace Chess
                         }
                         if (GetPiece(x2, y2) != null)
                         {
-                            if (GetPiece(x2, y2).getColor() == "w")
+                            if (GetPiece(x2, y2).getColor() == "b")
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         BlackArr[index].setX(x2);
                         BlackArr[index].setY(y2);
-                        if (!isBlackChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdBlackChecked(WhiteArr, BlackArr);
+
+                        if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                         {
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     else // We're moving down and right
                     {
-                        Console.WriteLine(1);
-                        Console.ReadLine();
                         for (int i = x1 + 1; i < x2; i++)
                         {
                             if (GetPiece(i, Math.Abs(y1 + i - x1)) != null)
@@ -1085,39 +1254,50 @@ namespace Chess
                         }
                         if (GetPiece(x2, y2) != null)
                         {
-                            if (GetPiece(x2, y2).getColor() == "w")
+                            if (GetPiece(x2, y2).getColor() == "b")
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         BlackArr[index].setX(x2);
                         BlackArr[index].setY(y2);
-                        if (!isBlackChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdBlackChecked(WhiteArr, BlackArr);
+
+                        if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                         {
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                 }
@@ -1127,39 +1307,50 @@ namespace Chess
                     {
                         if (GetPiece(x2, y2) != null)
                         {
-                            if (GetPiece(x2, y2).getColor() == "w")
+                            if (GetPiece(x2, y2).getColor() == "b")
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                                {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
+                                }
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
+                        delete(x2, y2, WhiteArr, BlackArr);
                         BlackArr[index].setX(x2);
                         BlackArr[index].setY(y2);
-                        if (!isBlackChecked(WhiteArr, BlackArr))
+                        delete(x1, y1, WhiteArr, BlackArr);
+                        UpdBlackChecked(WhiteArr, BlackArr);
+
+                        if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                         {
-                            BlackArr[index].setX(x1);
-                            BlackArr[index].setY(y1);
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return true;
                         }
-
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
                         return false;
                     }
                     return false;
@@ -1167,11 +1358,8 @@ namespace Chess
                 else if (p == 'Q') // If the piece is queen
                 {
                     BlackArr[index].setP('R');
-                    Console.Clear();
-                    Console.WriteLine(toString());
                     if (CanMove(x1, y1, x2, y2))
                     {
-                        Console.WriteLine(1);
                         BlackArr[index].setP('Q');
                         return true;
                     }
@@ -1191,6 +1379,8 @@ namespace Chess
                         if (GetPiece(x2, y2) != null)
                             return false;
                         BlackArr[index].setX(x2);
+                        isBlackChecked(WhiteArr, BlackArr);
+
                         if (isBlackChecked(WhiteArr, BlackArr))
                         {
                             BlackArr[index].setX(x1);
@@ -1208,6 +1398,8 @@ namespace Chess
                         if (GetPiece(x1 + 1, y1) != null || GetPiece(x1 + 2, y1) != null)
                             return false;
                         BlackArr[index].setX(x2);
+                        isBlackChecked(WhiteArr, BlackArr);
+
                         if (isBlackChecked(WhiteArr, BlackArr))
                         {
                             BlackArr[index].setX(x1);
@@ -1225,23 +1417,31 @@ namespace Chess
                                 return false;
                             else
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+                                
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                                 {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
                                 }
+
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
@@ -1249,23 +1449,30 @@ namespace Chess
                         {
                             if (GetPiece(x2 - 1, y2).getPawnMoved())
                             {
-                                Piece[] NeBlackw = new Piece[17];
-                                Piece[] NewWhite = new Piece[17];
+                                
                                 for (int j = 0; BlackArr[j] != null; j++)
                                 {
-                                    NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                    NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                                 }
                                 for (int j = 0; WhiteArr[j] != null; j++)
                                 {
-                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                    NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                                 }
-                                delete(x2 - 1, y2, NeBlackw, NewWhite);
-                                NeBlackw[index].setX(x2);
-                                NewWhite[index].setY(y2);
-                                if (!isBlackChecked(NewWhite, NeBlackw))
+                                delete(x2, y2, WhiteArr, BlackArr);
+                                BlackArr[index].setX(x2);
+                                BlackArr[index].setY(y2);
+                                delete(x1, y1, WhiteArr, BlackArr);
+                                UpdBlackChecked(WhiteArr, BlackArr);
+
+                                if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                                 {
+                                    WhiteArr = NewWhite;
+                                    BlackArr = NewBlack;
                                     return true;
                                 }
+
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return false;
                             }
                         }
@@ -1275,11 +1482,6 @@ namespace Chess
                 }
                 else if (p == 'K')
                 {
-                    if (x1 == 0 && y1 == 4 && x2 == 0 && y2 == 6)
-                        return CanCastle('b', 's');
-                    if (x1 == 0 && y1 == 4 && x2 == 0 && y2 == 2)
-                        return CanCastle('b', 'l');
-
                     if (Math.Abs(x1 - x2) > 1 || Math.Abs(y1 - y2) > 1)
                         return false;
                     if (GetPiece(x2, y2) != null)
@@ -1288,36 +1490,47 @@ namespace Chess
                             return false;
                         else
                         {
-                            Piece[] NeBlackw = new Piece[17];
-                            Piece[] NewWhite = new Piece[17];
+                            
                             for (int j = 0; BlackArr[j] != null; j++)
                             {
-                                NeBlackw[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "w", BlackArr[j].getP());
+                                NewBlack[j] = new Piece(BlackArr[j].getX(), BlackArr[j].getY(), "b", BlackArr[j].getP());
                             }
                             for (int j = 0; WhiteArr[j] != null; j++)
                             {
-                                NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "b", WhiteArr[j].getP());
+                                NewWhite[j] = new Piece(WhiteArr[j].getX(), WhiteArr[j].getY(), "w", WhiteArr[j].getP());
                             }
-                            delete(x2, y2, NeBlackw, NewWhite);
-                            NeBlackw[index].setX(x2);
-                            NewWhite[index].setY(y2);
-                            if (!isBlackChecked(NewWhite, NeBlackw))
+                            delete(x2, y2, WhiteArr, BlackArr);
+                            BlackArr[index].setX(x2);
+                            BlackArr[index].setY(y2);
+                            delete(x1, y1, WhiteArr, BlackArr);
+                            UpdBlackChecked(WhiteArr, BlackArr);
+
+                            if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
+                            {
+                                WhiteArr = NewWhite;
+                                BlackArr = NewBlack;
                                 return true;
+                            }
+                            WhiteArr = NewWhite;
+                            BlackArr = NewBlack;
                             return false;
                         }
                     }
-                    BlackArr[0].setX(x2);
-                    BlackArr[0].setY(y2);
-                    if (isBlackChecked(WhiteArr, BlackArr) == true)
+                    delete(x2, y2, WhiteArr, BlackArr);
+                    BlackArr[index].setX(x2);
+                    BlackArr[index].setY(y2);
+                    delete(x1, y1, WhiteArr, BlackArr);
+                    UpdBlackChecked(WhiteArr, BlackArr);
+
+                    if (!checkedBlack[BlackArr[0].getX(), BlackArr[0].getY()])
                     {
-                        BlackArr[index].setX(x1);
-                        BlackArr[index].setY(y1);
-                        return false;
+                        WhiteArr = NewWhite;
+                        BlackArr = NewBlack;
+                        return true;
                     }
-                    
-                    BlackArr[0].setX(x1);
-                    BlackArr[0].setY(y1);
-                    return true;
+                    WhiteArr = NewWhite;
+                    BlackArr = NewBlack;
+                    return false;
                 }
                 else
                     return false;
@@ -1357,7 +1570,7 @@ namespace Chess
                         {
                             for (int i = y1 + 1; i < y2; i++)
                             {
-                                if (GetPiece(i, x1) != null)
+                                if (GetPiece(x1, i) != null)
                                     return false;
                             }
                             return true;
@@ -1366,7 +1579,7 @@ namespace Chess
                         {
                             for (int i = y1 - 1; i > y2; i--)
                             {
-                                if (GetPiece(i, x1) != null)
+                                if (GetPiece(x1, i) != null)
                                     return false;
                             }
                             return true;
@@ -1631,6 +1844,46 @@ namespace Chess
 
         public bool isWhiteChecked(Piece[] White, Piece[] Black)
         {
+            UpdWhiteChecked(White, Black);
+            if (checkedWhite[White[0].getX(), White[0].getY()])
+            {
+                return true;
+            }
+            return false;
+
+        }
+
+        public void UpdBlackChecked(Piece[] White, Piece[] Black)
+        {
+            bool b = WhiteToMove;
+            WhiteToMove = true;
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    checkedBlack[i, j] = false;
+                }
+            }
+            for (int i = 0; White[i] != null; i++)
+            {
+
+                for (int j = 0; j < 8; j++)
+                {
+                    for (int k = 0; k < 8; k++)
+                    {
+                        if (CanHit(White[i].getX(), White[i].getY(), j, k))
+                        {
+                            checkedBlack[j, k] = true;
+                        }
+                    }
+                }
+            }
+            WhiteToMove = b;
+        }
+
+        public void UpdWhiteChecked(Piece[] White, Piece[] Black)
+        {
             bool b = WhiteToMove;
             WhiteToMove = false;
 
@@ -1655,52 +1908,63 @@ namespace Chess
                     }
                 }
             }
-            if (checkedWhite[White[0].getX(), White[0].getY()])
-            {
-                WhiteToMove = b;
-                return true;
-            }
             WhiteToMove = b;
-            return false;
-
         }
 
         public bool isBlackChecked(Piece[] White, Piece[] Black)
         {
-            bool b = WhiteToMove;
-            WhiteToMove = true;
-
-            for (int i = 0; i < 8; i++)
+            UpdBlackChecked(White, Black);
+            if (checkedBlack[Black[0].getX(), Black[0].getY()])
             {
-                for (int j = 0; j < 8; j++)
-                {
-                    checkedBlack[i, j] = false;
-                }
+                return true;
             }
-            for (int i = 0; White[i] != null; i++)
+            return false;
+        }
+
+        public bool isWhiteMated()
+        {
+            if (!WhiteToMove)
+                return false;
+            if (!isWhiteChecked(WhiteArr, BlackArr))
+                return false;
+            for (int x1 = 0; x1 < 8; x1++)
             {
-                
-                for (int j = 0; j < 8; j++)
+                for (int y1 = 0; y1 < 8; y1++)
                 {
-                    for (int k = 0; k < 8; k++)
+                    for (int x2 = 0; x2 < 8; x2++)
                     {
-                        if (CanHit(White[i].getX(), White[i].getY(), j, k))
+                        for (int y2 = 0; y2 < 8; y2++)
                         {
-                            checkedBlack[j, k] = true;
+                            if (CanMove(x1, y1, x2, y2))
+                                return false;
                         }
                     }
                 }
             }
-            if (checkedBlack[Black[0].getX(), Black[0].getY()])
+            return true;
+        }
+
+        public bool isBlackMated()
+        {
+            if (WhiteToMove)
+                return false;
+            if (!isBlackChecked(WhiteArr, BlackArr))
+                return false;
+            for (int x1 = 0; x1 < 8; x1++)
             {
-                WhiteToMove = b;
-                return true;
-
-
+                for (int y1 = 0; y1 < 8; y1++)
+                {
+                    for (int x2 = 0; x2 < 8; x2++)
+                    {
+                        for (int y2 = 0; y2 < 8; y2++)
+                        {
+                            if (CanMove(x1, y1, x2, y2))
+                                return false;
+                        }
+                    }
+                }
             }
-            WhiteToMove = b;
-            return false;
-
+            return true;
         }
 
         public Piece[] getWhiteArr()
@@ -1727,153 +1991,67 @@ namespace Chess
             return s;
         }
 
-        public bool CanCastle(char colour, char len)
+        public bool CanCastleShort()
         {
-            if (colour == 'w') // White is castling
+            if (WhiteToMove)
             {
-                int king_idx = 0;
-
-                for (int i = 0; i < WhiteArr.Length; i++) // Find king
-                {
-                    if (WhiteArr[i].getP() == 'K')
-                    {
-                        king_idx = i;
-                        break;
-                    }
-                }
-
-                if (WhiteArr[king_idx].getHaveMoved())  // If king has moved
+                if (WhiteArr[0].getHaveMoved())
                     return false;
-
-                if (len == 's') // If short castling
-                {
-                    try
-                    {
-                        if (GetPiece(7, 7).getHaveMoved()) // If rook has moved
-                            return false;
-                    }
-                    catch (NullReferenceException e)
-                    {
-                        return false;
-                    }
-
-                    if (GetPiece(7, 5) != null || GetPiece(7,6) != null) // Check that there is nothing in between
-                        return false;
-
-                    for (int i = 4; i <= 6; i++)  // Check that king doesn't pass through checked squares
-                    {
-                        WhiteArr[king_idx].setY(i);
-                        if (isWhiteChecked(WhiteArr, BlackArr))
-                        {
-                            WhiteArr[king_idx].setY(4);
-                            return false;
-                        }
-                    }
-
-                    WhiteArr[king_idx].setY(4);
-                    return true;
-                }
-                else
-                {
-                    try
-                    {
-                        if (GetPiece(7, 0).getHaveMoved())
-                            return false;
-                    }
-                    catch (NullReferenceException e)
-                    {
-                        return false;
-                    }
-
-                    if (GetPiece(7, 3) != null || GetPiece(7, 2) != null || GetPiece(7, 1) != null)
-                        return false;
-
-                    for (int i = 4; i >= 2; i--)
-                    {
-                        WhiteArr[king_idx].setY(i);
-                        if (isWhiteChecked(WhiteArr, BlackArr))
-                        {
-                            WhiteArr[king_idx].setY(4);
-                            return false;
-                        }
-                    }
-
-                    WhiteArr[king_idx].setY(4);
-                    return true;
-                }
+                if (GetPiece(7, 7) == null)
+                    return false;
+                if (GetPiece(7, 7).getHaveMoved())
+                    return false;
+                if (GetPiece(7,5)!=null||GetPiece(7,6)!=null)
+                    return false;
+                if (checkedWhite[7, 4] || checkedWhite[7, 5] || checkedWhite[7, 6])
+                    return false;
+                return true;
             }
             else
             {
-                int king_idx = 0;
-
-                for (int i = 0; i < BlackArr.Length; i++)
-                {
-                    if (BlackArr[i].getP() == 'K')
-                    {
-                        king_idx = i;
-                        break;
-                    }
-                }
-
-                if (BlackArr[king_idx].getHaveMoved())
+                if (BlackArr[0].getHaveMoved())
                     return false;
+                if (GetPiece(0, 7) == null)
+                    return false;
+                if (GetPiece(0, 7).getHaveMoved())
+                    return false;
+                if (GetPiece(0, 5) != null || GetPiece(0, 6) != null)
+                    return false;
+                if (checkedBlack[0, 4] || checkedBlack[0, 5] || checkedBlack[0, 6])
+                    return false;
+                return true;
+            }
+        }
 
-                if (len == 's')
-                {
-                    try
-                    {
-                        if (GetPiece(0, 7).getHaveMoved())
-                            return false;
-                    }
-                    catch (NullReferenceException e)
-                    {
-                        return false;
-                    }
-
-                    if (GetPiece(0, 5) != null || GetPiece(0, 6) != null)
-                        return false;
-
-                    for (int i = 4; i <= 6; i++)
-                    {
-                        BlackArr[king_idx].setY(i);
-                        if (isBlackChecked(WhiteArr, BlackArr))
-                        {
-                            BlackArr[king_idx].setY(4);
-                            return false;
-                        }
-                    }
-
-                    BlackArr[king_idx].setY(4);
-                    return true;
-                }
-                else
-                {
-                    try
-                    {
-                        if (GetPiece(0, 0).getHaveMoved())
-                            return false;
-                    }
-                    catch (NullReferenceException e)
-                    {
-                        return false;
-                    }
-
-                    if (GetPiece(0, 3) != null || GetPiece(0, 2) != null || GetPiece(0, 1) != null)
-                        return false;
-
-                    for (int i = 4; i >= 2; i--)
-                    {
-                        BlackArr[king_idx].setY(i);
-                        if (isBlackChecked(WhiteArr, BlackArr))
-                        {
-                            BlackArr[king_idx].setY(4);
-                            return false;
-                        }
-                    }
-
-                    BlackArr[king_idx].setY(4);
-                    return true;
-                }
+        public bool CanCastleLong()
+        {
+            if (WhiteToMove)
+            {
+                if (WhiteArr[0].getHaveMoved())
+                    return false;
+                if (GetPiece(7, 0) == null)
+                    return false;
+                if (GetPiece(7, 0).getHaveMoved())
+                    return false;
+                if (GetPiece(7, 2) != null || GetPiece(7, 3) != null || GetPiece(7,1) != null)
+                    return false;
+                if (checkedWhite[7, 4] || checkedWhite[7, 3] || checkedWhite[7, 2])
+                    return false;
+                return true;
+            }
+            else
+            {
+                if (BlackArr[0].getHaveMoved())
+                    return false;
+                if (GetPiece(0, 0) == null)
+                    return false;
+                if (GetPiece(0, 0).getHaveMoved())
+                    return false;
+                if (GetPiece(0, 2) != null || GetPiece(0, 3) != null || GetPiece(0, 1) != null)
+                    return false;
+                if (checkedBlack[0, 4] || checkedBlack[0, 3] || checkedBlack[0, 2])
+                    return false;
+                return true;
             }
         }
 
@@ -1899,6 +2077,14 @@ namespace Chess
         public Piece[] getBlackArr()
         {
             return BlackArr;
+        }
+
+        public void ChangeMove()
+        {
+            if (WhiteToMove)
+                WhiteToMove = false;
+            else
+                WhiteToMove = true;
         }
 
         public void Move(int x1, int y1, int x2, int y2)
@@ -1955,30 +2141,35 @@ namespace Chess
             {
                 if (White[i].getX() == x && White[i].getY() == y)
                 {
-                    int LastP = _WhiteLastP;
-                    if (White == WhiteArr)
-                        _WhiteLastP--;
-                    for (int j = i; j < LastP; j++)
+                    for (int j = i; White[j] != null; j++)
                     {
                         White[j] = White[j + 1];
-                        White[LastP] = null;
                     }
-
+                    int index = 0;
+                    for (int j = 0; White[j] != null; j++)
+                    {
+                        index++;
+                    }
+                    White[index] = null;
+                    break;
                 }
+                
             }
             for (int i = 0; Black[i] != null; i++)
             {
-
                 if (Black[i].getX() == x && Black[i].getY() == y)
                 {
-                    int LastP = _BlackLastP;
-                    if (Black == BlackArr)
-                        _BlackLastP--;
-                    for (int j = i; j < LastP; j++)
+                    for (int j = i; Black[j] != null; j++)
                     {
                         Black[j] = Black[j + 1];
-                        Black[LastP] = null;
                     }
+                    int index = 0;
+                    for (int j = 0; Black[j] != null; j++)
+                    {
+                        index++;
+                    }
+                    Black[index] = null;
+                    break;
                 }
             }
         }
