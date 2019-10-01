@@ -83,6 +83,42 @@ namespace Chess
                         b.Move(a1, a2, a3, a4);
                     }
 
+                    // Castling short white
+                    else if (b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'K' &&
+                        a1 == 7 && a2 == 4 && a3 == 7 && a4 == 6)
+                    {
+                        b.Move(a1, a2, a3, a4);
+                        Piece R = b.GetPiece(7, 7);
+                        R.setY(5);
+                    }
+
+                    // Castling long white
+                    else if (b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'K' &&
+                        a1 == 7 && a2 == 4 && a3 == 7 && a4 == 2)
+                    {
+                        b.Move(a1, a2, a3, a4);
+                        Piece R = b.GetPiece(7, 0);
+                        R.setY(3);
+                    }
+
+                    // Castling short black
+                    else if (!b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'K' &&
+                        a1 == 0 && a2 == 4 && a3 == 0 && a4 == 6)
+                    {
+                        b.Move(a1, a2, a3, a4);
+                        Piece R = b.GetPiece(0, 7);
+                        R.setY(5);
+                    }
+
+                    // Castling long black
+                    else if (!b.isWhiteToMove() && b.GetPiece(a1, a2).getP() == 'K' &&
+                        a1 == 0 && a2 == 4 && a3 == 0 && a4 == 2)
+                    {
+                        b.Move(a1, a2, a3, a4);
+                        Piece R = b.GetPiece(0, 0);
+                        R.setY(3);
+                    }
+
                     else
                     {
                         b.delete(a3, a4, b.getWhiteArr(), b.getBlackArr());
